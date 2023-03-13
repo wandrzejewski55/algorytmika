@@ -1,0 +1,34 @@
+import random
+
+
+# generate_random -> generuje ciąg n-elementowy wybierając liczby losowo z przedziału <1,10*n>
+def generate_random(n):
+    return [random.randint(1, 10 * n) for i in range(n)]
+
+
+# generate_increasing -> generuje ciąg rosnący od 1 do n, z step równym jeden
+def generate_increasing(n):
+    return [i for i in range(1, n + 1)]
+
+
+# generate_decreasing -> generuje ciąg malejący od n do 1, z step równym jeden
+def generate_decreasing(n):
+    return [i for i in range(n, 0, -1)]
+
+
+
+def a_seq(n):
+    seq = []
+    for i in range(n//2):
+        seq.append(random.randint(1, 10*n-2*i))
+    for i in range(n//2, n):
+        seq.append(random.randint(1, seq[i-1]))
+    return seq
+
+def v_seq(n):
+    seq = []
+    for i in range(n//2):
+        seq.append(random.randint(1, 10*n - 2*i))
+    for i in range(n//2, n):
+        seq.append(random.randint(seq[i-1] + 1, 10*n - (n-1)*2 + 2*(i-n//2)))
+    return seq

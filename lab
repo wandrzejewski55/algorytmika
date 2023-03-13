@@ -30,5 +30,42 @@ def v_seq(n):
     for i in range(n//2):
         seq.append(random.randint(1, 10*n - 2*i))
     for i in range(n//2, n):
-        seq.append(random.randint(seq[i-1] + 1, 10*n - (n-1)*2 + 2*(i-n//2)))
+        lower_bound = seq[i-1] + 1
+        upper_bound = max(lower_bound, 10*n - (n-i)*2)
+        seq.append(random.randint(lower_bound, upper_bound))
     return seq
+
+
+
+n_values = [10, 12, 15, 18, 20, 30]
+
+for n in n_values:
+    print(f"n={n}")
+    print("Random")
+    for i in range(10):
+        s = generate_random(n)
+        print(s)
+
+    print(f"n={n}")
+    print("Increasing")
+    for i in range(10):
+        s = generate_increasing(n)
+        print(s)
+
+    print(f"n={n}")
+    print("Decreasing")
+    for i in range(10):
+        s = generate_decreasing(n)
+        print(s)
+
+    print(f"n={n}")
+    print("A-shaped")
+    for i in range(10):
+        s = a_seq(n)
+        print(s)
+
+    print(f"n={n}")
+    print("V-shaped")
+    for i in range(10):
+        s = v_seq(n)
+        print(s)

@@ -1,0 +1,6 @@
+import random
+n = 10 #liczba elementów
+X = random.sample(range(10,10000),n)
+X.sort(reverse=True)
+print(X)
+

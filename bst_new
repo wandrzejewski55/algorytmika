@@ -1,0 +1,308 @@
+import random
+import sys
+import math
+
+sys.setrecursionlimit(99999999)
+
+
+class node:
+    def __init__(self, value):
+        self.left_child = None
+        self.right_child = None
+        self.value = value
+        self.parent = None
+
+
+class binary_search_tree:
+    def __init__(self):
+        self.root = None
+
+    def insertion(self, value):
+        if self.root != None:
+            self._insertion(value, self.root)
+        else:
+            self.root = node(value)
+
+    def _insertion(self, value, cur_node):
+        if value < cur_node.value:
+            if cur_node.left_child != None:
+                self._insertion(value, cur_node.left_child)
+            else:
+                cur_node.left_child = node(value)
+                cur_node.left_child.parent = cur_node
+        elif value > cur_node.value:
+            if cur_node.right_child != None:
+                self._insertion(value, cur_node.right_child)
+            else:
+                cur_node.right_child = node(value)
+                cur_node.right_child.parent = cur_node
+
+    def inorder_traversal(self):
+        if self.root != None:
+            self._inorder_traversal(self.root)
+
+    def _inorder_traversal(self, cur_node):
+        if cur_node.left_child != None:
+            self._inorder_traversal(cur_node.left_child)
+        print(cur_node.value)
+        if cur_node.right_child != None:
+            self._inorder_traversal(cur_node.right_child)
+
+    def postorder_traversal(self):
+        if self.root != None:
+            self._postorder_traversal(self.root)
+
+    def _postorder_traversal(self, cur_node):
+        if cur_node.left_child != None:
+            self._postorder_traversal(cur_node.left_child)
+        if cur_node.right_child != None:
+            self._postorder_traversal(cur_node.right_child)
+        print(cur_node.value)
+
+    def preorder_traversal(self):
+        if self.root != None:
+            self._preorder_traversal(self.root)
+
+    def _preorder_traversal(self, cur_node):
+        print(cur_node.value)
+        if cur_node.left_child != None:
+            self._preorder_traversal(cur_node.left_child)
+        if cur_node.right_child != None:
+            self._preorder_traversal(cur_node.right_child)
+
+    def find_min(self):
+        if self.root != None:
+            current = self.root
+            print(current.value)
+            while current.left_child != None:
+                current = current.left_child
+                print(current.value)
+
+    def find_max(self):
+        if self.root != None:
+            current = self.root
+            print(current.value)
+            while current.right_child != None:
+                current = current.right_child
+                print(current.value)
+
+    def find(self, value):
+        if self.root != None:
+            return self._find(value, self.root)
+
+    def _find(self, value, cur_node):
+        if value == cur_node.value:
+            return cur_node
+        if value < cur_node.value:
+            if cur_node.left_child != None:
+                return self._find(value, cur_node.left_child)
+
+        if value > cur_node.value:
+            if cur_node.right_child != None:
+                return self._find(value, cur_node.right_child)
+        else:
+            return None
+
+    def delete_value(self, value):
+        if self.root != None:
+            if self.find(value) != None:
+                self._delete_value(self.find(value))
+
+    def _delete_value(self, node):
+
+        def num_of_childreen(node):
+            outcome = 0
+            if node.left_child != None: outcome += 1
+            if node.right_child != None: outcome += 1
+            return outcome
+
+        def find_min_from(node):
+            current = node
+            while current.left_child != None:
+                current = current.left_child
+            return current
+
+        node_children = num_of_childreen(node)
+        node_parent = node.parent
+
+        if node_children == 0:
+
+            if node_parent != None:
+
+                if node_parent.left_child == node:
+                    node_parent.left_child = None
+                else:
+                    node_parent.right_child = None
+            else:
+                self.root = None
+
+        if node_children == 1:
+
+            if node.left_child != None:
+                child = node.left_child
+            else:
+                child = node.right_child
+
+            if node_parent != None:
+
+                if node_parent.left_child == node:
+                    node_parent.left_child = child
+                else:
+                    node_parent.right_child = child
+            else:
+                self.root = child
+
+            child.parent = node_parent
+
+        if node_children == 2:
+            successor = find_min_from(node.right_child)
+
+            node.value = successor.value
+
+            self._delete_value(successor)
+
+
+    def postorder_deletion(self):
+        if self.root != None:
+            self._postorder_deletion(self.root)
+
+
+    def _postorder_deletion(self, cur_node):
+        if cur_node.left_child != None:
+            self._postorder_deletion(cur_node.left_child)
+        if cur_node.right_child != None:
+            self._postorder_deletion(cur_node.right_child)
+        print(f"usuwana wartość..: {cur_node.value}")
+        self.delete_value(cur_node.value)
+
+
+    def preorder_subtree_traversal(self, value):
+        if self.root != None:
+            if self.find(value) != None:
+                self._preorder_subtree_traversal(self.find(value))
+
+
+    def _preorder_subtree_traversal(self, cur_node):
+        print(cur_node.value)
+        if cur_node.left_child != None:
+            self._preorder_subtree_traversal(cur_node.left_child)
+        if cur_node.right_child != None:
+            self._preorder_subtree_traversal(cur_node.right_child)
+
+
+    def bstToVine(self, grand):
+        count = 0
+        tmp = grand.right_child
+        prev = grand
+
+        while tmp:
+            if tmp.left_child:
+                oldTmp = tmp
+                tmp = tmp.left_child
+                oldTmp.left_child = tmp.right_child
+                tmp.right_child = oldTmp
+                prev.right_child = tmp
+                tmp.parent = prev
+                if oldTmp.left_child:
+                    oldTmp.left_child.parent = oldTmp
+            else:
+                count += 1
+                prev = tmp
+                tmp = tmp.right_child
+
+        return count
+
+
+    def compress(self, grand, m):
+        tmp = grand.right_child
+        for i in range(m):
+            oldTmp = tmp
+            tmp = tmp.right_child
+            grand.right_child = tmp
+            oldTmp.right_child = tmp.left_child
+            if tmp.left_child:
+                tmp.left_child.parent = oldTmp  # poprawiono referencję do rodzica
+            tmp.left_child = oldTmp
+            oldTmp.parent = tmp  # dodano referencję do rodzica
+            grand = tmp
+            if tmp.right_child:
+                tmp.right_child.parent = tmp
+            tmp = tmp.right_child
+
+
+    def balanceBST(self, root=None):
+        grand = node(0)
+        grand.right_child = self.root
+
+        count = self.bstToVine(grand)
+        h = int(math.log2(count + 1))
+        m = pow(2, h) - 1
+        self.compress(grand, count - m)
+        for m in [m // 2 ** i for i in range(1, h + 1)]:
+            self.compress(grand, m)
+        return grand.right_child
+
+
+def print_tree(node, level=0, char='─'):
+    if node is not None:
+        print_tree(node.right_child, level + 1, '┌')
+        print('    ' * level + char + ' ' + str(node.value))
+        print_tree(node.left_child, level + 1, '└')
+
+
+#
+tree = binary_search_tree()
+# for i in range(5):
+#     tree.insertion(random.randint(1,5000))
+tree.insertion(18)
+tree.insertion(15)
+tree.insertion(12)
+tree.insertion(11)
+tree.insertion(8)
+tree.insertion(20)
+print_tree(tree.root)
+
+
+
+
+print("# wyszukanie w drzewie elementuo najmniejszej i największej wartości i wypisanie ścieżkiposzukiwania (od korzenia do elementu szukanego)" )
+tree.find_min()
+print("---")
+tree.find_max()
+
+print("----")
+
+print("usunięcie elementu drzewa o wartości klucza podanej przez użytkownika - użytkownik wpisuje ile węzłów chce usunąć i podaje wartości kluczy")
+#
+# key = int(input("ile do usunięcia "))
+# for i in range(key):
+#     tree.delete_value(int(input("podaj wartość ")))
+# tree.inorder_traversal()
+
+
+print("----")
+
+print("wypisanie wszystkich elementów drzewa w porządku rosnącym (in-order)")
+tree.inorder_traversal()
+
+print("----")
+
+print("wypisanie wszystkich elementów drzewa w porządku pre-order")
+tree.preorder_traversal()
+
+print("----")
+
+
+print("usunięcie całego drzewa element po elemencie metodą post-order (wypisz element przed usunięciem)")
+# tree.postorder_deletion()
+print("---")
+
+print("wypisanie w porządku pre-order podrzewa, ktorego korzeń (klucz) podaje użytkownik,")
+tree.preorder_subtree_traversal(12)
+
+print("równoważenie drzewa przez rotacje (algorytm DSW) lub przez usuwanie korzenia (należy wybrać jedną metodę); wypisz wszystkie elementy drzewa w porządku pre-order przed i po zrównoważeniu.")
+new_root = tree.balanceBST()
+balanced_tree = binary_search_tree()
+balanced_tree.root = new_root
+print_tree(new_root)
+

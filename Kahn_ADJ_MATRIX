@@ -1,0 +1,73 @@
+class Graph:
+    def __init__(self, v, e):
+        self.v = v
+        self.e = e
+        self.adjMatrix = [[0] * v for j in range(v)]
+
+
+    def add_edge(self, start, e):
+        self.adjMatrix[start][e] = 1
+
+    def get_matrix(self):
+        print(self.adjMatrix)
+
+    def Kahn_Topological_Ordering(self):
+
+        in_degree = [0] * self.v
+        queue = []
+        for row in range(self.v):
+            for col in range(self.v):
+                if self.adjMatrix[row][col] == 1:
+                    in_degree[col] += 1
+
+
+        for i in range(len(in_degree)):
+            if in_degree[i] == 0:
+                queue.append(i)
+
+        index = 0
+        order = [0] * self.v
+        while len(queue) != 0:
+            at = queue[0]
+            queue.pop(0)
+            order[index] = at
+            index += 1
+
+            for col in range(self.v):
+                if self.adjMatrix[at][col] == 1:
+                    in_degree[col] -= 1
+                    if in_degree[col] == 0:
+                        queue.append(col)
+
+
+        if index != self.v:
+            return ("GRAF ZAWIERA CYKL, TO SORTOWANIE NIE JEST MOŻLIWE")
+        return (order)
+
+
+
+
+
+G = Graph(13, 17)
+
+G.add_edge(0, 2)
+G.add_edge(0, 3)
+G.add_edge(0, 6)
+G.add_edge(2, 6)
+G.add_edge(1, 4)
+G.add_edge(3, 1)
+G.add_edge(3, 4)
+G.add_edge(4, 5)
+G.add_edge(4, 8)
+G.add_edge(6, 7)
+G.add_edge(6, 11)
+G.add_edge(7, 4)
+G.add_edge(7, 12)
+G.add_edge(9, 2)
+G.add_edge(9, 10)
+G.add_edge(10, 6)
+G.add_edge(11, 12)
+G.add_edge(12, 8)
+# G.add_edge(11, 9) ### to jak się doda to tworzy cykl w grafie skierowanym
+
+print(G.Kahn_Topological_Ordering())

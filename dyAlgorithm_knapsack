@@ -1,0 +1,31 @@
+# 4 8
+# 2 4
+# 1 3
+# 4 6
+# 4 8
+
+n = 4           # ile elementów
+c = 8           # jaka pojemnosc
+W = [2, 1, 4, 4] # lista wag kolejno
+V = [4, 3, 6, 8] # wartosci
+
+
+def dyAlgorithm(c, n, W, V):
+    if n == 0 or c == 0:  # base case, jak capacity jest zero, lub liczba elementow ktore zostaly do sprawdzenia to zero
+        return 0
+    if t[n][c] != -1:       #sprawdzanie czy jest już taki subproblem rozwiązany
+        return t[n][c]
+    if W[n - 1] <= c:       #jesli sie miesci w plecaku , to sprawdzamy rekurencyjnie max z, uwzgledn. i nie
+        t[n][c] = max(V[n - 1] + dyAlgorithm(c - W[n - 1], n - 1, W, V), dyAlgorithm(c, n - 1, W, V))
+        return t[n][c]
+    elif W[n - 1] > c:  # jak waga jest większa niż capacity to pomijamy
+        t[n][c] = dyAlgorithm(c, n-1, W, V)
+        return t[n][c]
+
+t = [[-1 for i in range(c + 1)] for j in range(n + 1)] # matrix aby zapisywac podproblemy aby takich samych
+                                                        # nie robic
+
+
+print(dyAlgorithm(c, n, W, V))
+
+

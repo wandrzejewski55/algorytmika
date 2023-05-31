@@ -1,0 +1,85 @@
+#Dynamiczne
+
+n = 4           # ile elementów
+c = 8           # jaka pojemność
+W = [2, 1, 4, 4] # lista wag kolejno
+V = [4, 3, 6, 8] # wartości
+
+def dyAlgorithm(c, n, W, V, t, total_weight):
+    if n == 0 or c == 0:  # base case, jeśli pojemność jest zero lub liczba elementów do sprawdzenia to zero
+        return 0, total_weight, []
+    if t[n][c] != -1:       # sprawdzenie, czy subproblem został już rozwiązany
+        return t[n][c], total_weight, []
+    if W[n - 1] <= c:       # jeśli mieści się w plecaku, sprawdzamy rekurencyjnie maksimum uwzględniając i nieuwzględniając go
+        include_val, include_weight, include_items = dyAlgorithm(c - W[n - 1], n - 1, W, V, t, total_weight + W[n - 1])
+        exclude_val, exclude_weight, exclude_items = dyAlgorithm(c, n - 1, W, V, t, total_weight)
+        if include_val + V[n - 1] > exclude_val:
+            t[n][c] = include_val + V[n - 1]
+            include_items.append(n - 1)
+            return t[n][c], include_weight, include_items
+        else:
+            t[n][c] = exclude_val
+            return t[n][c], exclude_weight, exclude_items
+    elif W[n - 1] > c:  # jeśli waga jest większa niż pojemność, pomijamy ten przedmiot
+        t[n][c], total_weight, exclude_items = dyAlgorithm(c, n - 1, W, V, t, total_weight)
+        return t[n][c], total_weight, exclude_items
+
+t = [[-1 for i in range(c + 1)] for j in range(n + 1)] # macierz do zapisywania podproblemów
+
+max_value, total_weight, selected_items = dyAlgorithm(c, n, W, V, t, 0)
+
+print("Max Value:", max_value)
+print("Total Weight:", total_weight)
+print("Selected Items:", [i for i in selected_items])
+
+
+
+
+
+
+# Greedy
+
+n = 4           # liczba elementów
+c = 8           # pojemność plecaka
+W = [2, 1, 4, 4] # lista wag
+V = [4, 3, 6, 8] # lista wartości
+
+def add_item_indices(items, indices):
+    items_with_indices = []
+    for item, index in zip(items, indices):
+        items_with_indices.append((item, index))
+    return items_with_indices
+
+items_with_indices = add_item_indices(V, list(range(n)))
+
+def sort_lists_by_ratio(items):
+    sorted_items = sorted(items, key=lambda x: x[0] / W[x[1]], reverse=True)
+    sorted_V = [item[0] for item in sorted_items]
+    sorted_indices = [item[1] for item in sorted_items]
+    return sorted_V, sorted_indices
+
+sorted_V, sorted_indices = sort_lists_by_ratio(items_with_indices)
+sorted_W = [W[i] for i in sorted_indices]
+
+print("V =", sorted_V)
+print("W =", sorted_W)
+
+def greedy(n, c, W, V):
+    value = 0
+    total_weight = 0
+    items_in_bag = []
+    i = 0
+    while c > 0 and i < n:
+        if W[i] <= c:
+            value += V[i]
+            total_weight += W[i]
+            items_in_bag.append(sorted_indices[i])
+            c -= W[i]
+        i += 1
+
+    return value, total_weight, items_in_bag
+
+value, total_weight, items_in_bag = greedy(n, c, sorted_W, sorted_V)
+print("Wartość =", value)
+print("Suma wag =", total_weight)
+print("Przedmioty w plecaku (indeksy) =", items_in_bag)
